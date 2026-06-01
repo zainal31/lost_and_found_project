@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Masuk / Daftar Mahasiswa - Campus Lost and Found</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-kampus-blue: #04365b;
+        --color-kampus-gold: #bda678;
+        --color-kampus-bg: #f8fafc;
+      }
+    </style>
+  </head>
+  <body class="bg-kampus-bg font-sans text-gray-800 flex flex-col min-h-screen antialiased">
+    <header class="bg-white shadow-sm sticky top-0 z-50 px-4 md:px-8 h-20 flex justify-between items-center">
+      <a href="index.html" class="font-bold text-kampus-blue text-xl md:text-2xl tracking-tight hover:opacity-80 transition-opacity"> Campus Lost and Found </a>
+      <nav class="hidden md:flex items-center space-x-6">
+        <a href="index.html" class="text-gray-600 hover:text-kampus-blue font-medium transition-colors">Beranda</a>
+        <a href="#" class="text-gray-600 hover:text-kampus-blue font-medium transition-colors">Lapor Kehilangan</a>
+        <a href="#" class="text-gray-600 hover:text-kampus-blue font-medium transition-colors">Lapor Penemuan</a>
+        <a href="#" class="text-gray-600 hover:text-kampus-blue font-medium transition-colors">Dashboard</a>
+      </nav>
+    </header>
+    <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-lg w-full bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-bold text-kampus-blue mb-2">Selamat Datang Mahasiswa</h2>
+          <p class="text-gray-500 text-sm">Silakan lengkapi form di bawah ini untuk masuk atau mendaftar ke sistem.</p>
+        </div>
+        <form class="space-y-5" action="#" method="POST">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-kampus-blue focus:border-kampus-blue outline-none transition-colors"
+              placeholder="Sesuai KTM" />
+          </div>
+          <div>
+            <label for="nim" class="block text-sm font-medium text-gray-700 mb-1">Nomor Induk Mahasiswa (NIM)</label>
+            <input
+              id="nim"
+              name="nim"
+              type="text"
+              required
+              class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-kampus-blue focus:border-kampus-blue outline-none transition-colors"
+              placeholder="Contoh: 25210400012" />
+          </div>
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Nomor Handphone/WhatsApp</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              required
+              class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-kampus-blue focus:border-kampus-blue outline-none transition-colors"
+              placeholder="Contoh: 081234567890" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="fakultas" class="block text-sm font-medium text-gray-700 mb-1">Fakultas</label>
+              <select
+                id="fakultas"
+                name="fakultas"
+                required
+                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-kampus-blue focus:border-kampus-blue outline-none transition-colors">
+                <option value="" disabled selected>Pilih Fakultas</option>
+                <option value="FIK">Fakultas Ilmu Komputer</option>
+                <option value="FEB">Fakultas Ekonomi & Bisnis</option>
+              </select>
+            </div>
+            <div>
+              <label for="prodi" class="block text-sm font-medium text-gray-700 mb-1">Program Studi</label>
+              <select
+                id="prodi"
+                name="prodi"
+                required
+                class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-kampus-blue focus:border-kampus-blue outline-none transition-colors">
+                <option value="" disabled selected>Pilih Prodi</option>
+                <option value="STI">Sistem dan Teknologi Informasi</option>
+                <option value="ILKOM">Ilmu Komputer</option>
+                <option value="DS">Sains Data</option>
+                <option value="BISDIG">Bisnis Digital</option>
+                <option value="FINANCE">Ekonomi & Keuangan</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label for="semester" class="block text-sm font-medium text-gray-700 mb-1">Semester</label>
+            <select
+              id="semester"
+              name="semester"
+              required
+              class="w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white focus:ring-2 focus:ring-kampus-blue focus:border-kampus-blue outline-none transition-colors">
+              <option value="" disabled selected>Pilih Semester</option>
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+              <option value="7">Semester 7</option>
+              <option value="8">Semester 8</option>
+            </select>
+          </div>
+          <div class="pt-2">
+            <button type="submit" class="w-full bg-kampus-blue text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-900 transition-colors shadow-md">Daftar dan Masuk</button>
+          </div>
+        </form>
+        <div class="mt-8 pt-6 border-t border-gray-200 text-center">
+          <p class="text-sm text-gray-500 mb-3">Bukan Mahasiswa?</p>
+          <a href="admin-login.html" class="inline-flex items-center gap-2 text-sm font-bold text-kampus-gold hover:text-yellow-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            Masuk sebagai Admin/Petugas
+          </a>
+        </div>
+      </div>
+    </main>
+    <footer class="bg-kampus-blue text-white py-8 mt-auto border-t border-blue-900">
+      <p class="text-center text-sm text-gray-300">&copy; 2026 Campus Lost and Found. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
