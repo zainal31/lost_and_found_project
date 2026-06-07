@@ -12,6 +12,9 @@ export default function Header({ isLoggedIn }) {
 				<a href="#" className="text-gray-600 hover:text-kampus-blue font-medium">
 					Lapor Penemuan
 				</a>
+				<a href="#" className="text-gray-600 hover:text-kampus-blue font-medium transition-colors">
+					Cari Barang
+				</a>
 
 				{!isLoggedIn && (
 					<a href="/login-mahasiswa" className="text-kampus-blue font-bold border-2 border-kampus-blue px-4 py-2 rounded-lg hover:bg-kampus-blue hover:text-white transition-all">
@@ -20,11 +23,13 @@ export default function Header({ isLoggedIn }) {
 				)}
 
 				{isLoggedIn && (
-					<div className="flex items-center space-x-4">
-						<a href="/dashboard" className="text-gray-600 hover:text-kampus-blue font-medium">
-							Dashboard
+					<div className="flex items-center space-x-5 border-l border-gray-200 pl-5">
+						<a
+							href="#"
+							className="w-10 h-10 rounded-full bg-kampus-blue text-white flex items-center justify-center font-bold text-sm border-2 border-transparent hover:border-kampus-gold hover:shadow-md transition-all"
+							title="Ke Dashboard Profil">
+							BL
 						</a>
-						<button className="text-red-600 font-medium hover:underline">Keluar</button>
 					</div>
 				)}
 			</nav>
