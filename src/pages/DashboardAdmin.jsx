@@ -55,7 +55,6 @@ export default function DashboardAdmin() {
               </header>
               
               <div className="divide-y divide-gray-100">
-                {/* Item Klaim 1 */}
                 <article className="p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex flex-col sm:flex-row justify-between gap-4 mb-4">
                     <div>
@@ -117,8 +116,6 @@ export default function DashboardAdmin() {
               </header>
               
               <div className="p-4 space-y-4">
-                
-                {/* Item Database 1 */}
                 <div className="flex gap-4 p-3 border border-gray-100 rounded-lg hover:shadow-sm transition-shadow bg-white">
                   <div className="w-16 h-16 bg-gray-100 rounded-md flex-shrink-0 border border-gray-200"></div>
                   <div className="flex-1 min-w-0">
@@ -131,7 +128,6 @@ export default function DashboardAdmin() {
                   </div>
                 </div>
 
-                {/* Item Database 2 */}
                 <div className="flex gap-4 p-3 border border-gray-100 rounded-lg hover:shadow-sm transition-shadow bg-white">
                   <div className="w-16 h-16 bg-gray-100 rounded-md flex-shrink-0 border border-gray-200"></div>
                   <div className="flex-1 min-w-0">

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 
 export default function DashboardMahasiswa() {
@@ -11,13 +12,12 @@ export default function DashboardMahasiswa() {
             <p className="text-gray-500 text-sm mt-1">NIM: 25130600025 • Fakultas Ilmu Komputer • Sistem dan Teknologi Informasi</p>
           </header>
           <nav className="flex gap-3 w-full md:w-auto">
-            {/* Arahkan ke rute halaman yang sudah kita buat */}
-            <a href="/lapor-kehilangan" className="flex-1 text-center bg-kampus-blue text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-opacity-90 transition-all text-sm shadow-xs block">
+            <Link to="/lapor-kehilangan" className="flex-1 text-center bg-kampus-blue text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-opacity-90 transition-all text-sm shadow-xs block">
               + Lapor Kehilangan
-            </a>
-            <a href="/lapor-penemuan" className="flex-1 text-center bg-white text-kampus-blue border border-kampus-blue font-semibold px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all text-sm block">
+            </Link>
+            <Link to="/lapor-penemuan" className="flex-1 text-center bg-white text-kampus-blue border border-kampus-blue font-semibold px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all text-sm block">
               + Lapor Penemuan
-            </a>
+            </Link>
           </nav>
         </section>
 
@@ -52,7 +52,6 @@ export default function DashboardMahasiswa() {
               </header>
               
               <div className="divide-y divide-gray-100">
-                {/* Item Laporan Kehilangan dengan Auto-Match */}
                 <article className="p-6 hover:bg-gray-50 transition-colors">
                   <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <div className="flex items-center space-x-3">
@@ -95,7 +94,6 @@ export default function DashboardMahasiswa() {
                   </section>
                 </article>
 
-                {/* Item Laporan Penemuan */}
                 <article className="p-6 hover:bg-gray-50 transition-colors">
                   <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <div className="flex items-center space-x-3">

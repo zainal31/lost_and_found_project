@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 
 export default function Beranda() {
@@ -12,8 +13,8 @@ export default function Beranda() {
           Menyediakan platform terpusat untuk pelaporan barang hilang dan barang ditemukan di lingkungan kampus. Platform web ini bisa diakses kapan saja dan di mana saja untuk mempermudah proses pencarian.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <button className="bg-kampus-gold hover:bg-yellow-600 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-transform transform hover:-translate-y-0.5">Laporkan Kehilangan</button>
-          <button className="border-2 border-kampus-gold text-kampus-gold hover:bg-kampus-gold hover:text-white font-medium py-3 px-8 rounded-full transition-all">Laporkan Penemuan</button>
+          <Link to="/login" className="bg-kampus-gold hover:bg-yellow-600 text-white font-medium py-3 px-8 rounded-full shadow-lg transition-transform transform hover:-translate-y-0.5">Laporkan Kehilangan</Link>
+          <Link to="/login" className="border-2 border-kampus-gold text-kampus-gold hover:bg-kampus-gold hover:text-white font-medium py-3 px-8 rounded-full transition-all">Laporkan Penemuan</Link>
         </div>
       </section>
       
@@ -23,7 +24,6 @@ export default function Beranda() {
           <p className="text-gray-500 mb-8">Daftar barang yang baru-baru ini dilaporkan hilang atau ditemukan:</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            {/* Card Kehilangan */}
             <article className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
               <header className="bg-red-50 px-4 py-3 border-b border-red-100 flex justify-between items-center">
                 <h4 className="text-red-600 font-bold uppercase tracking-wider text-xs">Barang Hilang</h4>
@@ -44,7 +44,6 @@ export default function Beranda() {
               </button>
             </article>
 
-            {/* Card Penemuan */}
             <article className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg transition-shadow">
               <header className="bg-green-50 px-4 py-3 border-b border-green-100 flex justify-between items-center">
                 <h4 className="text-green-600 font-bold uppercase tracking-wider text-xs">Barang Ditemukan</h4>
