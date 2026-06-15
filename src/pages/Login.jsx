@@ -7,6 +7,7 @@ const INITIAL_MAHASISWA = {
   name: '',
   nim: '',
   phone: '',
+  password: '',
   fakultas: '',
   prodi: '',
   semester: '',
@@ -27,6 +28,9 @@ function validateMahasiswa(values) {
   }
   if (!/^\d{10,13}$/.test(values.phone.trim())) {
     errors.phone = 'Nomor HP harus 10-13 digit angka.';
+  }
+  if (values.password.length < 6) {
+    errors.password = 'Password minimal 6 karakter.';
   }
   if (!values.fakultas) errors.fakultas = 'Fakultas wajib dipilih.';
   if (!values.prodi) errors.prodi = 'Program studi wajib dipilih.';
@@ -100,6 +104,7 @@ export default function Login() {
       name: true,
       nim: true,
       phone: true,
+      password: true,
       fakultas: true,
       prodi: true,
       semester: true,
@@ -108,8 +113,13 @@ export default function Login() {
 
     setLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
-    loginMahasiswa(mahasiswa);
+    const result = loginMahasiswa(mahasiswa, mahasiswa.password);
     setLoading(false);
+
+    if (!result.success) {
+      setGlobalError(result.error);
+      return;
+    }
     navigate('/dashboard-mahasiswa', { replace: true });
   };
 
@@ -123,7 +133,7 @@ export default function Login() {
 
     setLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
-    const result = loginAdmin(admin);
+    const result = await loginAdmin(admin);
     setLoading(false);
     if (!result) {
       setGlobalError('Username atau password salah. Coba lagi.');
@@ -234,6 +244,31 @@ export default function Login() {
                     placeholder="Contoh: 081234567890"
                   />
                   {renderError(touched.phone, errors.phone)}
+                </div>
+
+                <div>
+                  <label htmlFor="mhs-password" className="block text-sm font-medium text-gray-700 mb-1">Kata Sandi (Untuk Pendaftaran & Login)</label>
+                  <div className="relative">
+                    <input
+                      id="mhs-password"
+                      name="mhs-password"
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={mahasiswa.password}
+                      onChange={updateMahasiswa('password')}
+                      onBlur={markTouched('password')}
+                      className={`${inputClass(!!errors.password)} pr-12`}
+                      placeholder="Minimal 6 karakter"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute inset-y-0 right-0 px-3 text-xs font-semibold text-gray-500 hover:text-kampus-blue"
+                    >
+                      {showPassword ? 'Sembunyi' : 'Lihat'}
+                    </button>
+                  </div>
+                  {renderError(touched.password, errors.password)}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
