@@ -1,4 +1,5 @@
 import Layout from "../components/Layout";
+import ModalKlaim from "../components/ModalKlaim";
 
 export default function KatalogBarang() {
 	return (
@@ -161,6 +162,7 @@ export default function KatalogBarang() {
 					</article>
 				</div>
 			</section>
+			<ModalKlaim />
 		</Layout>
 	);
 }
