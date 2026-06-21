@@ -1,9 +1,13 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getUser, logout, getInitials } from "../lib/auth";
 
 export default function Header({ isLoggedIn: isLoggedInProp }) {
 	const navigate = useNavigate();
-	const user = getUser();
+	const [user, setUser] = useState(getUser());
+	useEffect(() => {
+		setUser(getUser());
+	}, [isLoggedInProp]);
 	const isLoggedIn = isLoggedInProp ?? user !== null;
 
 	const handleLogout = () => {

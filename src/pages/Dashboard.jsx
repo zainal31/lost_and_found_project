@@ -83,6 +83,19 @@ export default function Dashboard() {
 		loadData();
 	};
 
+	const handleDeleteItem = (itemId) => {
+		if (!window.confirm("Apakah Anda yakin ingin menghapus laporan barang ini?")) return;
+
+		const updatedItems = items.filter((item) => item.id !== itemId);
+		localStorage.setItem("clf_items", JSON.stringify(updatedItems));
+
+		const updatedClaims = claims.filter((claim) => claim.itemId !== itemId);
+		localStorage.setItem("clf_claims", JSON.stringify(updatedClaims));
+
+		alert("Laporan berhasil dihapus.");
+		loadData();
+	};
+
 	return (
 		<Layout isLoggedIn={true}>
 			<div className="max-w-7xl w-full mx-auto px-4 md:px-8 py-8 flex flex-col gap-8">
@@ -248,7 +261,15 @@ export default function Dashboard() {
 															</span>
 															<h4 className="font-semibold text-gray-900 text-base">{item.name}</h4>
 														</div>
-														<span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 uppercase">Status: {item.status}</span>
+														<div className="flex items-center gap-3">
+															<span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 uppercase">Status: {item.status}</span>
+															<button
+																type="button"
+																onClick={() => handleDeleteItem(item.id)}
+																className="text-xs text-red-600 hover:text-red-800 font-semibold border border-red-200 px-2.5 py-1 rounded-md hover:bg-red-50 transition-colors cursor-pointer">
+																Hapus
+															</button>
+														</div>
 													</header>
 													<p className="text-sm text-gray-600">{item.description}</p>
 												</article>

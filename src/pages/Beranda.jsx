@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 import CardBarang from "../components/CardBarang";
+import { isLoggedIn } from "../lib/auth";
 
 export default function Beranda() {
 	const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Beranda() {
 	}, []);
 
 	return (
-		<Layout isLoggedIn={false}>
+		<Layout isLoggedIn={isLoggedIn()}>
 			<section className="max-w-4xl mx-auto px-4 py-16 md:py-24 text-center">
 				<h1 className="text-4xl md:text-5xl font-bold text-kampus-blue leading-tight mb-6">
 					Solusi Terpadu untuk
