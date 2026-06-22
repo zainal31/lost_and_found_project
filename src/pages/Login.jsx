@@ -346,9 +346,6 @@ export default function Login() {
 								</div>
 								<h2 className="text-2xl font-bold text-kampus-blue">Portal Admin/Petugas</h2>
 								<p className="text-gray-500 text-sm mt-1">Masuk untuk memverifikasi klaim dan mengelola barang temuan.</p>
-								<p className="text-xs text-gray-400 mt-2">
-									Demo credentials: <span className="font-mono text-gray-600">admin</span> / <span className="font-mono text-gray-600">admin123</span>
-								</p>
 							</div>
 
 							<form className="space-y-5" onSubmit={submitAdmin} noValidate>

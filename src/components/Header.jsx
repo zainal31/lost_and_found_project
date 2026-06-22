@@ -5,6 +5,8 @@ import { getUser, logout, getInitials } from "../lib/auth";
 export default function Header({ isLoggedIn: isLoggedInProp }) {
 	const navigate = useNavigate();
 	const [user, setUser] = useState(getUser());
+	const [notifCount, setNotifCount] = useState(0);
+
 	useEffect(() => {
 		const currentUser = getUser();
 		setUser(currentUser);

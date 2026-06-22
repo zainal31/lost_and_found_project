@@ -20,7 +20,7 @@ const DEFAULT_MOCK_ITEMS = [
 		reporterName: "Farhan Firdaus",
 		reporterPhone: "081298765432",
 		createdAt: "2026-05-22T09:35:00.000Z",
-		image: "",
+		image: "/images/kunci_motor.jpg",
 	},
 	{
 		id: "mock_2",
@@ -37,7 +37,7 @@ const DEFAULT_MOCK_ITEMS = [
 		reporterName: "Budi Laksana",
 		reporterPhone: "085712345678",
 		createdAt: "2026-05-21T12:30:00.000Z",
-		image: "",
+		image: "/images/dompet.jpg",
 	},
 	{
 		id: "mock_3",
@@ -54,7 +54,7 @@ const DEFAULT_MOCK_ITEMS = [
 		reporterName: "Budi Laksana",
 		reporterPhone: "085712345678",
 		createdAt: "2026-05-19T15:15:00.000Z",
-		image: "",
+		image: "/images/ipad.png",
 	},
 ];
 
