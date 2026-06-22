@@ -6,7 +6,38 @@ export default function Header({ isLoggedIn: isLoggedInProp }) {
 	const navigate = useNavigate();
 	const [user, setUser] = useState(getUser());
 	useEffect(() => {
+		const currentUser = getUser();
+		setUser(currentUser);
 		setUser(getUser());
+		if (currentUser && currentUser.role === "mahasiswa") {
+			try {
+				const allItems = JSON.parse(localStorage.getItem("clf_items") || "[]");
+				const myLostItems = allItems.filter((i) => i.reporterNim === currentUser.nim && i.type === "lost" && i.status === "hilang");
+				const foundItemsInWarehouse = allItems.filter((i) => i.type === "found" && i.status === "ditemukan");
+
+				let matchCounter = 0;
+				myLostItems.forEach((lostItem) => {
+					const lostKeywords = lostItem.name
+						.toLowerCase()
+						.split(/\s+/)
+						.filter((w) => w.length > 2);
+
+					const hasMatch = foundItemsInWarehouse.some((found) => {
+						if (found.category !== lostItem.category) return false;
+						const foundName = found.name.toLowerCase();
+						return lostKeywords.some((keyword) => foundName.includes(keyword));
+					});
+
+					if (hasMatch) matchCounter++;
+				});
+
+				setNotifCount(matchCounter);
+			} catch (err) {
+				console.error("Gagal menghitung notifikasi", err);
+			}
+		} else {
+			setNotifCount(0);
+		}
 	}, [isLoggedInProp]);
 	const isLoggedIn = isLoggedInProp ?? user !== null;
 
@@ -40,6 +71,24 @@ export default function Header({ isLoggedIn: isLoggedInProp }) {
 
 				{isLoggedIn && (
 					<div className="flex items-center space-x-5 border-l border-gray-200 pl-5">
+						{user?.role === "mahasiswa" && (
+							<Link
+								to="/dashboard"
+								className="relative p-2 text-gray-500 hover:text-kampus-blue transition-colors group"
+								title={notifCount > 0 ? `${notifCount} Barang temuan cocok!` : "Tidak ada notifikasi baru"}>
+								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 group-hover:scale-105 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+									/>
+								</svg>
+
+								{notifCount > 0 && (
+									<span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-bounce">{notifCount}</span>
+								)}
+							</Link>
+						)}
 						<button type="button" onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors">
 							Keluar
 						</button>

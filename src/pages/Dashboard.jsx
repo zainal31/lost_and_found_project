@@ -60,7 +60,11 @@ export default function Dashboard() {
 	const handleApprove = (claimId, itemId) => {
 		if (!window.confirm("Apakah Anda yakin menyetujui klaim ini dan menandai barang telah diserahkan?")) return;
 
-		const updatedClaims = claims.map((c) => (c.id === claimId ? { ...c, status: "disetujui" } : c));
+		const updatedClaims = claims.map((c) => {
+			if (c.id === claimId) return { ...c, status: "disetujui" };
+			if (c.itemId === itemId && c.status === "menunggu") return { ...c, status: "ditolak" };
+			return c;
+		});
 		localStorage.setItem("clf_claims", JSON.stringify(updatedClaims));
 
 		const updatedItems = items.map((i) => (i.id === itemId ? { ...i, status: "selesai" } : i));
@@ -81,6 +85,27 @@ export default function Dashboard() {
 
 		alert("Klaim ditolak.");
 		loadData();
+	};
+
+	const getClaimsForItem = (itemId) => {
+		return claims.filter((c) => c.itemId === itemId && c.status === "menunggu");
+	};
+
+	const findMatch = (lostItem) => {
+		if (lostItem.type !== "lost" || lostItem.status !== "hilang") return null;
+
+		const allFoundItems = items.filter((item) => item.type === "found" && item.status === "ditemukan");
+
+		const lostKeywords = lostItem.name
+			.toLowerCase()
+			.split(/\s+/)
+			.filter((w) => w.length > 2);
+
+		return allFoundItems.find((found) => {
+			if (found.category !== lostItem.category) return false;
+			const foundName = found.name.toLowerCase();
+			return lostKeywords.some((keyword) => foundName.includes(keyword));
+		});
 	};
 
 	const handleDeleteItem = (itemId) => {
@@ -142,50 +167,65 @@ export default function Dashboard() {
 										{pendingClaims.length === 0 ? (
 											<p className="p-6 text-gray-500 text-center text-sm">Tidak ada klaim baru yang menunggu verifikasi.</p>
 										) : (
-											pendingClaims.map((claim) => (
-												<article key={claim.id} className="p-6 hover:bg-gray-50 transition-colors">
-													<div className="flex flex-col sm:flex-row justify-between gap-4 mb-4">
-														<div>
-															<div className="flex items-center gap-2 mb-1">
-																<h4 className="font-bold text-gray-900 text-base">{claim.itemName}</h4>
+											pendingClaims.map((claim) => {
+												const itemClaims = getClaimsForItem(claim.itemId);
+												const isDisputed = itemClaims.length >= 2;
+
+												return (
+													<article key={claim.id} className="p-6 hover:bg-gray-50 transition-colors">
+														<div className="flex flex-col sm:flex-row justify-between gap-4 mb-4">
+															<div>
+																<div className="flex items-center gap-2 mb-1">
+																	<h4 className="font-bold text-gray-900 text-base">{claim.itemName}</h4>
+																	{isDisputed && (
+																		<span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 border border-red-200 uppercase animate-pulse">
+																			Dispute / Klaim Ganda ({itemClaims.length})
+																		</span>
+																	)}
+																</div>
+																<p className="text-sm text-gray-600">
+																	Diklaim oleh:{" "}
+																	<span className="font-semibold text-gray-800">
+																		{claim.claimerName} (NIM: {claim.claimerNim})
+																	</span>
+																</p>
 															</div>
-															<p className="text-sm text-gray-600">
-																Diklaim oleh:{" "}
-																<span className="font-semibold text-gray-800">
-																	{claim.claimerName} (NIM: {claim.claimerNim})
-																</span>
-															</p>
 														</div>
-													</div>
 
-													<div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
-														<h5 className="text-xs font-bold text-gray-700 mb-2 uppercase">Bukti Verifikasi</h5>
-														<p className="text-sm text-gray-800 mb-1">
-															<span className="text-gray-500">Tanya:</span> "{claim.verificationQuestion || "Apa ciri khususnya?"}"
-														</p>
-														<p className="text-sm font-semibold text-kampus-blue mb-3">
-															<span className="text-gray-500 font-normal">Jawab:</span> "{claim.jawaban}"
-														</p>
-														<p className="text-sm text-gray-800 mb-1">
-															<span className="text-gray-500">Deskripsi Rahasia:</span>
-														</p>
-														<p className="text-sm font-medium text-gray-800 italic">"{claim.deskripsiRahasia}"</p>
-													</div>
+														<div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+															<h5 className="text-xs font-bold text-gray-700 mb-2 uppercase">Bukti Verifikasi</h5>
+															<p className="text-sm text-gray-800 mb-1">
+																<span className="text-gray-500">Tanya:</span> "{claim.verificationQuestion || "Apa ciri khususnya?"}"
+															</p>
+															<p className="text-sm font-semibold text-kampus-blue mb-3">
+																<span className="text-gray-500 font-normal">Jawab:</span> "{claim.jawaban}"
+															</p>
+															<p className="text-sm text-gray-800 mb-1">
+																<span className="text-gray-500">Deskripsi Rahasia:</span>
+															</p>
+															<p className="text-sm font-medium text-gray-800 italic">"{claim.deskripsiRahasia}"</p>
+														</div>
+														{isDisputed && (
+															<div className="mb-4 px-4 py-2 bg-red-50 border border-red-100 text-xs text-red-700 rounded-lg">
+																Perhatian Petugas: Ada {itemClaims.length} pengajuan klaim untuk barang ini. Harap periksa detail deskripsi rahasia dengan sangat teliti sebelum mengambil keputusan!
+															</div>
+														)}
 
-													<div className="flex gap-3">
-														<button
-															onClick={() => handleApprove(claim.id, claim.itemId)}
-															className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-6 rounded-lg text-sm shadow-sm transition-colors cursor-pointer">
-															✓ Setujui
-														</button>
-														<button
-															onClick={() => handleReject(claim.id, claim.itemId)}
-															className="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 px-6 rounded-lg text-sm border border-red-200 transition-colors cursor-pointer">
-															Tolak
-														</button>
-													</div>
-												</article>
-											))
+														<div className="flex gap-3">
+															<button
+																onClick={() => handleApprove(claim.id, claim.itemId)}
+																className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-6 rounded-lg text-sm shadow-sm transition-colors cursor-pointer">
+																Setujui
+															</button>
+															<button
+																onClick={() => handleReject(claim.id, claim.itemId)}
+																className="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 px-6 rounded-lg text-sm border border-red-200 transition-colors cursor-pointer">
+																Tolak
+															</button>
+														</div>
+													</article>
+												);
+											})
 										)}
 									</div>
 								</section>
@@ -252,28 +292,45 @@ export default function Dashboard() {
 										{myItems.length === 0 ? (
 											<p className="p-6 text-gray-500 text-center text-sm">Anda belum membuat laporan apapun.</p>
 										) : (
-											myItems.map((item) => (
-												<article key={item.id} className="p-6 hover:bg-gray-50 transition-colors">
-													<header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-														<div className="flex items-center space-x-3">
-															<span className={`text-xs font-bold px-2.5 py-1 rounded-sm uppercase ${item.type === "lost" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
-																{item.type === "lost" ? "Kehilangan" : "Ditemukan"}
-															</span>
-															<h4 className="font-semibold text-gray-900 text-base">{item.name}</h4>
-														</div>
-														<div className="flex items-center gap-3">
-															<span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 uppercase">Status: {item.status}</span>
-															<button
-																type="button"
-																onClick={() => handleDeleteItem(item.id)}
-																className="text-xs text-red-600 hover:text-red-800 font-semibold border border-red-200 px-2.5 py-1 rounded-md hover:bg-red-50 transition-colors cursor-pointer">
-																Hapus
-															</button>
-														</div>
-													</header>
-													<p className="text-sm text-gray-600">{item.description}</p>
-												</article>
-											))
+											myItems.map((item) => {
+												const match = findMatch(item);
+
+												return (
+													<article key={item.id} className="p-6 hover:bg-gray-50 transition-colors">
+														<header className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+															<div className="flex items-center space-x-3">
+																<span className={`text-xs font-bold px-2.5 py-1 rounded-sm uppercase ${item.type === "lost" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
+																	{item.type === "lost" ? "Kehilangan" : "Ditemukan"}
+																</span>
+																<h4 className="font-semibold text-gray-900 text-base">{item.name}</h4>
+															</div>
+															<div className="flex items-center gap-3">
+																<span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-600 uppercase">Status: {item.status}</span>
+																<button
+																	type="button"
+																	onClick={() => handleDeleteItem(item.id)}
+																	className="text-xs text-red-600 hover:text-red-800 font-semibold border border-red-200 px-2.5 py-1 rounded-md hover:bg-red-50 transition-colors cursor-pointer">
+																	Hapus
+																</button>
+															</div>
+														</header>
+														<p className="text-sm text-gray-600">{item.description}</p>
+														{item.type === "lost" && match && (
+															<div className="mt-4 p-3.5 bg-amber-50 border border-dashed border-amber-200 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+																<div className="text-xs text-amber-800 font-medium">
+																	<span className="font-bold">Sistem Mencocokkan:</span> Seseorang melaporkan barang yang mirip dengan kehilangan Anda, yaitu{" "}
+																	<span className="font-bold text-amber-900">"{match.name}"</span> di area <span className="font-semibold">{match.location}</span>. Apakah ini barang Anda?
+																</div>
+																<Link
+																	to={`/katalog?search=${encodeURIComponent(match.name)}`}
+																	className="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-md transition-all shadow-sm shrink-0">
+																	Lihat & Klaim
+																</Link>
+															</div>
+														)}
+													</article>
+												);
+											})
 										)}
 									</div>
 								</section>
