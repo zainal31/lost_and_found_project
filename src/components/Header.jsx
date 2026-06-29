@@ -7,6 +7,11 @@ export default function Header({ isLoggedIn: isLoggedInProp }) {
 	const [user, setUser] = useState(getUser());
 	const [notifCount, setNotifCount] = useState(0);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const [isNotifPopupOpen, setIsNotifPopupOpen] = useState(false);
+	const [matchedItemsList, setMatchedItemsList] = useState([]);
+	const [lastReadNotif, setLastReadNotif] = useState(() => {
+		return localStorage.getItem(`clf_last_read_notif_${getUser()?.nim}`) || "0";
+	});
 
 	useEffect(() => {
 		const currentUser = getUser();
@@ -18,29 +23,54 @@ export default function Header({ isLoggedIn: isLoggedInProp }) {
 				const foundItemsInWarehouse = allItems.filter((i) => i.type === "found" && i.status === "ditemukan");
 
 				let matchCounter = 0;
+				let matchedTempList = [];
+
 				myLostItems.forEach((lostItem) => {
 					const lostKeywords = lostItem.name
 						.toLowerCase()
 						.split(/\s+/)
 						.filter((w) => w.length > 2);
 
-					const hasMatch = foundItemsInWarehouse.some((found) => {
+					const matches = foundItemsInWarehouse.filter((found) => {
 						if (found.category !== lostItem.category) return false;
 						const foundName = found.name.toLowerCase();
 						return lostKeywords.some((keyword) => foundName.includes(keyword));
 					});
 
-					if (hasMatch) matchCounter++;
+					if (matches.length > 0) {
+						matches.forEach((matchItem) => {
+							if (!matchedTempList.some((el) => el.id === matchItem.id)) {
+								matchedTempList.push(matchItem);
+
+								const itemTime = new Date(matchItem.createdAt || matchItem.date).getTime();
+								if (itemTime > Number(lastReadNotif)) {
+									matchCounter++;
+								}
+							}
+						});
+					}
 				});
 
 				setNotifCount(matchCounter);
+				setMatchedItemsList(matchedTempList);
 			} catch (err) {
 				console.error("Gagal menghitung notifikasi", err);
 			}
 		} else {
 			setNotifCount(0);
+			setMatchedItemsList([]);
 		}
-	}, [isLoggedInProp]);
+	}, [isLoggedInProp, lastReadNotif]);
+	const handleNotifClick = () => {
+		setIsNotifPopupOpen(!isNotifPopupOpen);
+
+		if (!isNotifPopupOpen && user) {
+			const now = Date.now().toString();
+			localStorage.setItem(`clf_last_read_notif_${user.nim}`, now);
+			setLastReadNotif(now);
+			setNotifCount(0);
+		}
+	};
 	const isLoggedIn = isLoggedInProp ?? user !== null;
 
 	const handleLogout = () => {
@@ -88,21 +118,52 @@ export default function Header({ isLoggedIn: isLoggedInProp }) {
 				{isLoggedIn && (
 					<div className="flex items-center space-x-5 border-l border-gray-200 pl-5">
 						{user?.role === "mahasiswa" && (
-							<Link
-								to="/dashboard"
-								className="relative p-2 text-gray-500 hover:text-kampus-blue transition-colors group"
-								title={notifCount > 0 ? `${notifCount} Barang temuan cocok!` : "Tidak ada notifikasi baru"}>
-								<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 group-hover:scale-105 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-									/>
-								</svg>
-								{notifCount > 0 && (
-									<span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-bounce">{notifCount}</span>
+							<div className="relative">
+								<button
+									type="button"
+									onClick={handleNotifClick}
+									className="p-2 text-gray-500 hover:text-kampus-blue transition-colors focus:outline-none cursor-pointer relative"
+									title="Notifikasi Pencocokan Barang">
+									<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+										/>
+									</svg>
+									{notifCount > 0 && (
+										<span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-bounce">{notifCount}</span>
+									)}
+								</button>
+
+								{isNotifPopupOpen && (
+									<div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-150 py-2 z-50 text-left">
+										<header className="px-4 py-2 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-t-xl">
+											<span className="font-bold text-sm text-gray-850">Notifikasi Pencocokan Barang</span>
+											<span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">{notifCount} Baru</span>
+										</header>
+										<div className="max-h-60 overflow-y-auto divide-y divide-gray-50">
+											{matchedItemsList.length === 0 ? (
+												<p className="p-4 text-xs text-gray-400 text-center">Belum ada barang yang cocok dengan laporan Anda.</p>
+											) : (
+												matchedItemsList.map((item) => (
+													<div key={item.id} className="p-3.5 hover:bg-gray-50 transition-colors text-xs flex flex-col gap-1.5">
+														<p className="text-gray-700">
+															Ada temuan <span className="font-bold text-kampus-blue">"{item.name}"</span> di <span className="font-medium">{item.location}</span>.
+														</p>
+														<Link
+															to={`/katalog?search=${encodeURIComponent(item.name)}`}
+															onClick={() => setIsNotifPopupOpen(false)}
+															className="text-[11px] text-amber-600 font-bold hover:underline inline-block self-end">
+															Detail & Klaim &rarr;
+														</Link>
+													</div>
+												))
+											)}
+										</div>
+									</div>
 								)}
-							</Link>
+							</div>
 						)}
 						<button type="button" onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-600 font-medium transition-colors cursor-pointer">
 							Keluar
